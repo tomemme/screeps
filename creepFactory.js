@@ -30,7 +30,7 @@ const creepFactory = {
         const spawn = room.find(FIND_MY_SPAWNS)[0];
         
         if (spawn && !spawn.spawning) {
-            const result = spawn.spawnCreep(bodyParts, newName, { memory: { role: roleName } });
+            const result = spawn.spawnCreep(bodyParts, newName, { memory: { role: roleName, spawnedAt: Game.time } });
             if (result === OK) {
                 console.log(`${room.name}: Spawning new ${roleName} named ${newName}`);
             } else {

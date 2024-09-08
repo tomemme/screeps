@@ -1,5 +1,8 @@
 const taskManager = {
     assignTask: function(creep) {
+        const lifetime = Game.time - creep.memory.spawnedAt;
+        console.log(`${creep.name} has been alive for ${lifetime} ticks.`); 
+        
         switch(creep.memory.role) {
             case 'harvester':
                 this.assignHarvesterTask(creep);

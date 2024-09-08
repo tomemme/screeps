@@ -36,7 +36,10 @@ const structureManager = {
                 const position = this.findAvailablePositionForStructure(room, STRUCTURE_EXTENSION);
                 if (position) {
                     room.createConstructionSite(position.x, position.y, STRUCTURE_EXTENSION);
-                    console.log(`${room.name}: Placing extension at (${position.x}, ${position.y})`);
+                    if (result === OK) {
+                        Memory.rooms[room.name].extensionBuiltAt = Game.time;
+                        console.log(`${room.name}: Placing extension at (${position.x}, ${position.y})`);
+                    }
                 }
             }
         }
@@ -59,7 +62,10 @@ const structureManager = {
                 const position = this.findAvailablePositionForStructure(room, STRUCTURE_TOWER);
                 if (position) {
                     room.createConstructionSite(position.x, position.y, STRUCTURE_TOWER);
-                    console.log(`${room.name}: Placing tower at (${position.x}, ${position.y})`);
+                    if (result === OK) {
+                        Memory.rooms[room.name].towerBuiltAt = Game.time;
+                        console.log(`${room.name}: Placing tower at (${position.x}, ${position.y})`);
+                    }
                 }
             }
         }
