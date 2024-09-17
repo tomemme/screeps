@@ -27,6 +27,7 @@ module.exports.loop = function() {
         const builders = _.filter(Game.creeps, (creep) => creep.memory.role === 'builder');
         const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role === 'upgrader');
         const defenders = _.filter(Game.creeps, (creep) => creep.memory.role === 'defender');
+        const runners = _.filter(Game.creeps, (creep) => creep.memory.role === 'runner');
     
         // Adjust these numbers based on room needs
         if (harvesters.length < 3) {
@@ -37,6 +38,8 @@ module.exports.loop = function() {
             creepFactory.createCreep(room, 'upgrader');
         } else if (defenders.length < 1) {
             creepFactory.createCreep(room, 'defender');
+        } else if (runners.length < 2) {
+            creepFactory.createCreep(room, 'runner');
         }
     }
 

@@ -21,6 +21,9 @@ const creepFactory = {
             case 'defender':
                 bodyParts = this.getDefenderBody(energyAvailable);
                 break;
+            case 'runner':
+                bodyParts = this.getRunnerBody(energyAvailable);
+                break;
             default:
                 console.log(`Invalid role requested: ${roleName}`);
                 return;
@@ -30,7 +33,14 @@ const creepFactory = {
         const spawn = room.find(FIND_MY_SPAWNS)[0];
         
         if (spawn && !spawn.spawning) {
-            const result = spawn.spawnCreep(bodyParts, newName, { memory: { role: roleName, spawnedAt: Game.time } });
+            let memory = { role: roleName, spawnedAt: Game.time };
+
+             // If the role is 'runner', add the toggle flag for alternating between builder and upgrader
+            if (roleName === 'runner') {
+                memory.deliverToUpgrader = false;  // Start with builder delivery first
+            } 
+
+            const result = spawn.spawnCreep(bodyParts, newName, { memory });
             if (result === OK) {
                 console.log(`${room.name}: Spawning new ${roleName} named ${newName}`);
             } else {
@@ -39,9 +49,23 @@ const creepFactory = {
         }
     },
 
+    // Add a helper function to decide if a runner is needed
+    shouldSpawnRunner: function(room) {
+        const runners = _.filter(Game.creeps, (creep) => creep.memory.role === 'runner' && creep.room.name === room.name);
+        const droppedEnergy = room.find(FIND_DROPPED_RESOURCES);
+    
+    // You can adjust the conditions based on your energy flow needs
+    return (runners.length < 2 && droppedEnergy.length > 0);
+    },
+
     getHarvesterBody: function(energyAvailable) {
         if (energyAvailable >= 550) return [WORK, WORK, WORK, CARRY, MOVE, MOVE];  // Larger harvesters
         return [WORK, CARRY, MOVE];  // Default smaller harvester
+    },
+
+    getRunnerBody: function(energyAvailable) {
+        if (energyAvailable >= 550) return [ MOVE, CARRY, CARRY, MOVE, MOVE];  // Larger harvesters
+        return [MOVE, CARRY, MOVE];  // Default smaller harvester
     },
 
     getBuilderBody: function(energyAvailable) {

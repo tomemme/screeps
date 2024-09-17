@@ -16,6 +16,10 @@ const defenseManager = {
         });
         towers.forEach(tower => towerManager.run(tower));
 
+        // add wall and rampart building
+        buildWalls(room);
+        protectCoreStructures(room);
+
         // Handle rampart and wall maintenance
         rampartManager.run(room);
 
@@ -51,5 +55,46 @@ const defenseManager = {
         });
     }
 };
+
+// Build walls around the edges of the room
+function buildWalls(room) {
+    const terrain = room.getTerrain();
+    const edges = [];
+    
+    // Get all room edges for wall construction
+    for (let x = 0; x < 50; x++) {
+        for (let y = 0; y < 50; y++) {
+            if (x === 0 || x === 49 || y === 0 || y === 49) {
+                if (terrain.get(x, y) !== TERRAIN_MASK_WALL) {
+                    edges.push(new RoomPosition(x, y, room.name));
+                }
+            }
+        }
+    }
+
+    // Place walls along the room edges
+    for (let edge of edges) {
+        if (room.lookForAt(LOOK_STRUCTURES, edge).length === 0) {
+            room.createConstructionSite(edge, STRUCTURE_WALL);
+        }
+    }
+    console.log('Walls planned around the room');
+}
+
+// Protect key structures with ramparts
+function protectCoreStructures(room) {
+    let importantStructures = room.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => structure.structureType === STRUCTURE_SPAWN ||
+                               structure.structureType === STRUCTURE_STORAGE ||
+                               structure.structureType === STRUCTURE_TOWER ||
+                               structure.structureType === STRUCTURE_CONTROLLER
+    });
+
+    // Build ramparts around core structures
+    for (let structure of importantStructures) {
+        room.createConstructionSite(structure.pos, STRUCTURE_RAMPART);
+        console.log(`Protecting ${structure.structureType} with rampart`);
+    }
+}
 
 module.exports = defenseManager;

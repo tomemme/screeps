@@ -2,6 +2,7 @@ const roleHarvester = require('role.harvester');
 const roleBuilder = require('role.builder');
 const roleUpgrader = require('role.upgrader');
 const roleDefender = require('role.defender');
+const roleRunner = require('role.runner');
 
 const creepManager = {
     run: function(creep) {
@@ -17,6 +18,9 @@ const creepManager = {
                 break;
             case 'defender':
                 roleDefender.run(creep);
+                break;
+            case 'runner':
+                roleRunner.run(creep);
                 break;
             default:
                 console.log(`Creep ${creep.name} has no valid role!`);
